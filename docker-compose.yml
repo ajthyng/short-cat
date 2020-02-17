@@ -1,0 +1,40 @@
+version: '3'
+services:
+  short-cat-api:
+    build: 
+      context: ./api
+      dockerfile: Dockerfile.dev
+    environment: 
+      CAS_URL: 'use override'
+      DB_HOST: 'use override'
+      DB_NAME: 'use override'
+    volumes:
+      - ./api/src:/usr/app/src
+      - ./api/test:/usr/app/test
+      - ./api/dist:/usr/app/dist
+      - ./api/policy.conf:/usr/app/policy.conf
+  cas:
+    image: registry.its.txstate.edu/cas-stub:base
+    environment:
+      NODE_ENV: development
+    ports:
+      - 2000:80
+  mongodb:
+    image: mongo:latest
+    volumes:
+      - mongodb:/data/db
+    ports:
+      - 127.0.0.1:27017:27017
+    logging:
+      driver: none
+  nginx:
+    image: nginx:latest
+    ports:
+      - 80:80
+    volumes:
+      - ./nginx.dev.conf:/etc/nginx/nginx.conf
+    depends_on:
+      - short-cat-api
+volumes:
+  short-cat-api: {}
+  mongodb: {}
