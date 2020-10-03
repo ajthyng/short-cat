@@ -1,7 +1,7 @@
-import { Controller, Post, Body, Get, Param, Res } from '@nestjs/common'
-import { UrlService } from './url.service'
-import { CreateUrlDto } from './url.dto'
+import { Body, Controller, Get, NotFoundException, Param, Post, Res } from '@nestjs/common'
 import { Response } from 'express'
+import { CreateUrlDto } from './url.dto'
+import { UrlService } from './url.service'
 
 @Controller()
 export class UrlController {
@@ -17,6 +17,9 @@ export class UrlController {
   @Get(':id')
   async loadUrl (@Param('id') id, @Res() response: Response) {
     const destination = await this.urlService.findDestination(id)
+    if (destination === null) {
+      throw new NotFoundException()
+    }
     response.redirect(destination)
   }
 }

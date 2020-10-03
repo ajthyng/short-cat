@@ -32,8 +32,8 @@ export class UrlService {
   }
 
   async findDestination (id: string) {
-    const { destination } = await this.urlModel.findOne({ short: id })
-    return destination
+    const result = await this.urlModel.findOne({ short: id }) 
+    return result?.destination ?? null
   }
 
   async findByOwner (owner: string) {
